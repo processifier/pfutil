@@ -29,18 +29,26 @@ NOTICE:  In order to overwrite existing file in choosen direty add the following
 --force-overwrite
 ```
 
-### Structure of config.yaml
+### Structure of sample config.yaml
 input:
+```sh
   timestampMask: "%Y-%m-%dT%H:%M:%S" (timestamp mask used for start/end of activity) 
-  workingCalendar: (calendar settings for business hours calculation)
-    holidayCalendar: PL (country code, see details https://pypi.org/project/holidays/)
-    workingDays: [0,1,2,3,4] (list of working days, 0 refers to monday etc.)
-    workStart: 8 (work starting hour)
-    workEnd: 16 (work ending hour)
-  processName: p2p (process name defined by user)
-  eventlogInputColumns: (mapping of eventlog columns)
-    caseId: case_id (required)
-    activity: Activity (required)
-    endTimestamp: end_time (required)
-    startTimestamp: start_time (optional)
-    resource: Resource (optional)
+```
+```sh
+  workingCalendar:                   (calendar settings for business hours calculation)
+    holidayCalendar: PL              (country code, see details https://pypi.org/project/holidays/)
+    workingDays: [0,1,2,3,4]         (list of working days, 0 refers to monday etc.)
+    workStart: 8                     (work starting hour)
+    workEnd: 16                      (work ending hour)
+```
+```sh
+  processName: p2p                   (process name defined by user)
+```
+```sh
+  eventlogInputColumns:              (mapping of eventlog columns)
+    caseId: case_id                  (required)
+    activity: Activity               (required)
+    endTimestamp: end_time           (required)
+    startTimestamp: start_time       (optional)
+    resource: Resource               (optional)
+```
