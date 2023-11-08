@@ -1,0 +1,7 @@
+pm4py==2.5.*
+pyyaml
+pandas==1.5.*
+jsonschema
+sqlalchemy==2.*
+businesstimedelta
+holidays

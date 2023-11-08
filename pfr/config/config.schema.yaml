@@ -1,0 +1,45 @@
+type: object
+properties:
+  params:
+    type: object
+  input:
+    type: object
+    additionalProperties: false
+    required:
+    - timestampMask
+    - processName
+    - eventlogInputColumns
+    properties:
+      timestampMask:
+        type: string
+      workingCalendar:
+        type: object
+        properties:
+          holidayCalendar:
+            type: string
+          workingDays:
+            type: array
+          workStart:
+            type: integer
+          workEnd:
+            type: integer
+      processName:
+        type: string
+      eventlogInputColumns:
+        type: object
+        required:
+        - caseId
+        - activity
+        - endTimestamp
+        additionalProperties: false
+        properties:
+          caseId:
+            type: string
+          activity:
+            type: string
+          endTimestamp:
+            type: string
+          startTimestamp:
+            type: string
+          resource:
+            type: string
