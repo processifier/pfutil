@@ -22,9 +22,9 @@ NOTICE: _All command line params except `-config` can be set in config file._
 
 [example_data/p2p/](example_data/p2p/) directory contains sample data
 ```sh
-./pfutil -c example_data/p2p/config.yaml  put -e example_data/p2p_short/eventlog.csv --csv-out output
+./pfutil -c example_data/p2p/config.yaml  put -e example_data/p2p/eventlog.csv --csv-out output
 ```
-NOTICE:  In order to overwrite existing file in choosen direty add the following flag:
+NOTICE:  In order to overwrite existing file in chosen directory add the following flag:
 ```sh
 --force-overwrite
 ```
