@@ -84,7 +84,7 @@ class EventlogEtl:
         eventlog.sort_values(by=[Eventlog.case_id.name, Eventlog.activity_start_ts.name], inplace=True)
         eventlog = self._add_fake_activities(eventlog)
         eventlog = (eventlog
-                    .groupby(Eventlog.case_id.name)
+                    .groupby(Eventlog.case_id.name, group_keys=True)
                     .apply(self._get_case_edge)
                     .reset_index(drop=True))
         eventlog[Eventlog.transition_business_duration_h.name] = eventlog.apply(

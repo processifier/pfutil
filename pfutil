@@ -10,6 +10,7 @@ from pfr.config import load_config, LOGGING_FORMAT
 
 logging.basicConfig(format=LOGGING_FORMAT)
 LOG = logging.getLogger()
+LOG.setLevel(logging.INFO)
 
 cmd_parser = Parser()
 cmd_args = cmd_parser.args()
@@ -22,17 +23,16 @@ else:
 
 
 def create_model(input_config, eventlog):
-    LOG.debug(f"Creating model...")
     lp = LogProcessor(input_config)
-    LOG.info(f"Creating model...OK")
     return lp.create_model(eventlog)
 
 
 def save_to_csv(model, output_path):
-    LOG.debug("Saving model to....")
+    LOG.info(f"Saving model:")
     for t, df in model.items():
-        path = df.to_csv(os.path.join(output_path, f'{t.__tablename__}.csv'), index=False)
-        LOG.info("\t%s -> %s", t.__tablename__, path)
+        file_name = os.path.join(output_path, f'{t.__tablename__}.csv')
+        df.to_csv(file_name, index=False)
+        LOG.info(f"\t{file_name}")
     LOG.info("Saving model...OK")
 
 
@@ -45,7 +45,9 @@ if cmd_args.command == Parser.COMMAND_PUT:
     eventlog = pd.read_csv(params.eventlog)
     LOG.debug("Loading eventlog: %s ... OK", params.eventlog)
 
+    LOG.info(f"Creating model...")
     model = create_model(config['input'], eventlog)
+    LOG.info(f"Creating model...OK")
 
     if params.csv_out:
         try:
