@@ -56,7 +56,8 @@ class EventlogEtl:
         timestamp_mask = self._config["timestampMask"]
         eventlog = pd.DataFrame()
         eventlog[Eventlog.case_id.name] = raw_eventlog[self._config['eventlogInputColumns']['caseId']].astype(str)
-        eventlog[Eventlog.resource.name] = raw_eventlog[self._config['eventlogInputColumns']['resource']]
+
+
         eventlog[Eventlog.activity.name] = raw_eventlog[self._config['eventlogInputColumns']['activity']]
         eventlog[Eventlog.activity.name] = eventlog.apply(lambda row: trim_if_string(row[Eventlog.activity.name]), axis=1)
         eventlog[Eventlog.id.name] = range(0, len(eventlog))
@@ -65,6 +66,12 @@ class EventlogEtl:
                                                             errors='raise',
                                                             format=timestamp_mask,
                                                             utc=True).dt.tz_localize(None)
+
+        if "resource" in self._config['eventlogInputColumns'].keys():
+            eventlog[Eventlog.resource.name] = raw_eventlog[self._config['eventlogInputColumns']['resource']]
+        else:
+            eventlog[Eventlog.resource.name] = ""
+
         if "startTimestamp" in self._config['eventlogInputColumns'].keys():
             eventlog[Eventlog.activity_start_ts.name] = pd.to_datetime(
                 raw_eventlog[self._config['eventlogInputColumns']['startTimestamp']],
