@@ -11,7 +11,7 @@ NOTICE: _All command line params except `-config` can be set in config file._
 
 * upload data 
   ```sh
-  pfutil  -c 'path to congig yaml file' put -e 'path to eventlog csv file' --csv-out 'relative path to output directory' 
+  pfutil  -c 'path to config yaml file' put -e 'path to eventlog csv file' --csv-out 'relative path to output_test directory' 
   ```
 
 * display help
@@ -22,7 +22,7 @@ NOTICE: _All command line params except `-config` can be set in config file._
 
 [example_data/p2p/](example_data/p2p/) directory contains sample data
 ```sh
-./pfutil -c example_data/p2p/config.yaml  put -e example_data/p2p/eventlog.csv --csv-out output
+./pfutil -c example_data/p2p/config.yaml  put -e example_data/p2p/eventlog.csv --csv-out output_test
 ```
 NOTICE:  In order to overwrite existing file in chosen directory add the following flag:
 ```sh
