@@ -1,0 +1,58 @@
+#!/usr/bin/env python
+import logging
+import os
+import pandas as pd
+
+from pfr import LogProcessor
+from pfr.cmdline import Parser
+from pfr.config import load_config, LOGGING_FORMAT
+
+
+logging.basicConfig(format=LOGGING_FORMAT)
+LOG = logging.getLogger()
+LOG.setLevel(logging.INFO)
+
+cmd_parser = Parser()
+cmd_args = cmd_parser.args()
+
+if cmd_args.config:
+    LOG.debug("Using config: %s", cmd_args.config)
+    config, params = load_config(cmd_args)
+else:
+    params = cmd_args
+
+
+def create_model(input_config, eventlog):
+    lp = LogProcessor(input_config)
+    return lp.create_model(eventlog)
+
+
+def save_to_csv(model, output_path):
+    LOG.info(f"Saving model:")
+    for t, df in model.items():
+        file_name = os.path.join(output_path, f'{t.__tablename__}.csv')
+        df.to_csv(file_name, index=False)
+        LOG.info(f"\t{file_name}")
+    LOG.info("Saving model...OK")
+
+
+if cmd_args.command == Parser.COMMAND_PUT:
+    if not params.config:
+        print("No config file specified")
+        cmd_parser.print_usage()
+        exit(1)
+    LOG.info("Loading eventlog: %s", params.eventlog)
+    eventlog = pd.read_csv(params.eventlog)
+    LOG.debug("Loading eventlog: %s ... OK", params.eventlog)
+
+    LOG.info(f"Creating model...")
+    model = create_model(config['input'], eventlog)
+    LOG.info(f"Creating model...OK")
+
+    if params.csv_out:
+        try:
+            os.makedirs(params.csv_out, exist_ok=params.force_overwrite)
+        except FileExistsError:
+            print("Output dir already exists, use --force-overwrite to overwrite.")
+            exit(1)
+        save_to_csv(model, output_path=params.csv_out)
