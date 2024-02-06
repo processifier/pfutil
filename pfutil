@@ -7,7 +7,19 @@ from pfr import LogProcessor
 from pfr.cmdline import Parser
 from pfr.config import load_config, LOGGING_FORMAT
 
+default_output_dir = 'processifier_output'
+default_timestamp_mask = "%Y-%m-%dT%H:%M:%S"
+default_process_name = "process"
+default_eventlog_columns_mapping = {
+    "caseId": "case_id",
+    "activity": "activity",
+    "endTimestamp": "end_time",
+    "startTimestamp": "start_time"
+}
 
+default_input_config = {'input': {'timestampMask': default_timestamp_mask,
+                                  'processName': default_process_name,
+                                  'eventlogInputColumns': default_eventlog_columns_mapping}}
 logging.basicConfig(format=LOGGING_FORMAT)
 LOG = logging.getLogger()
 LOG.setLevel(logging.INFO)
@@ -19,8 +31,17 @@ if cmd_args.config:
     LOG.debug("Using config: %s", cmd_args.config)
     config, params = load_config(cmd_args)
 else:
+    config = default_input_config
     params = cmd_args
-
+    print("No config file specified")
+    print("Applying default configuration:")
+    print(f"\t Timestamp mask: {default_timestamp_mask}")
+    print(f"\t Process name: {default_timestamp_mask}")
+    print("\t Eventlog columns mapping:")
+    print(f"\t\t Case ID  -> {default_eventlog_columns_mapping.get('caseId')}")
+    print(f"\t\t Activity -> {default_eventlog_columns_mapping.get('activity')}")
+    print(f"\t\t Start timestamp -> {default_eventlog_columns_mapping.get('startTimestamp')}")
+    print(f"\t\t End timestamp -> {default_eventlog_columns_mapping.get('endTimestamp')}")
 
 def create_model(input_config, eventlog):
     lp = LogProcessor(input_config)
@@ -37,10 +58,6 @@ def save_to_csv(model, output_path):
 
 
 if cmd_args.command == Parser.COMMAND_PUT:
-    if not params.config:
-        print("No config file specified")
-        cmd_parser.print_usage()
-        exit(1)
     LOG.info("Loading eventlog: %s", params.eventlog)
     eventlog = pd.read_csv(params.eventlog)
     LOG.debug("Loading eventlog: %s ... OK", params.eventlog)
@@ -48,11 +65,13 @@ if cmd_args.command == Parser.COMMAND_PUT:
     LOG.info(f"Creating model...")
     model = create_model(config['input'], eventlog)
     LOG.info(f"Creating model...OK")
-
-    if params.csv_out:
-        try:
-            os.makedirs(params.csv_out, exist_ok=params.force_overwrite)
-        except FileExistsError:
-            print("Output dir already exists, use --force-overwrite to overwrite.")
-            exit(1)
-        save_to_csv(model, output_path=params.csv_out)
+    output_path = params.csv_out if params.csv_out else default_output_dir
+    if not params.csv_out:
+        print("No output dir specified")
+        print(f"\t Output files will be saved to: {os.path.join(os.getcwd(), output_path)} ")
+    try:
+        os.makedirs(output_path, exist_ok=params.force_overwrite)
+    except FileExistsError:
+        print("Output dir already exists, use --force-overwrite to overwrite.")
+        exit(1)
+    save_to_csv(model, output_path=output_path)

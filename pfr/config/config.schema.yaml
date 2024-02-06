@@ -12,17 +12,6 @@ properties:
     properties:
       timestampMask:
         type: string
-      workingCalendar:
-        type: object
-        properties:
-          holidayCalendar:
-            type: string
-          workingDays:
-            type: array
-          workStart:
-            type: integer
-          workEnd:
-            type: integer
       processName:
         type: string
       eventlogInputColumns:
@@ -40,6 +29,4 @@ properties:
           endTimestamp:
             type: string
           startTimestamp:
-            type: string
-          resource:
             type: string

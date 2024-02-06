@@ -1,16 +1,13 @@
 import pandas as pd
 from pfr.config.schema import Eventlog, Case
-from pfr.engine.helpers import get_business_durtation_h, get_working_time_calculator, get_duration_h
+from pfr.engine.helpers import get_duration_h
 from pfr.engine.etl_eventlog import FakeActivities
 
 
 class CasesFactory:
     def __init__(self, config):
         self._config = config
-        self._businesshrs = get_working_time_calculator(self._config['workingCalendar']['workingDays'],
-                                                        self._config['workingCalendar']['workStart'],
-                                                        self._config['workingCalendar']['workEnd'],
-                                                        self._config['workingCalendar']['holidayCalendar'])
+
 
     def create(self, eventlog, case2variant):
         df = eventlog.copy(deep=True)
@@ -23,8 +20,6 @@ class CasesFactory:
         result = pd.merge(df_first_and_last_event, df_case_to_variants, how='left', on=Case.id.name)
         result[Case.duration_h.name] = result.apply(
             lambda row: get_duration_h(row[Case.start_ts.name], row[Case.end_ts.name]), axis=1)
-        result[Case.business_duration_h.name] = result.apply(
-            lambda row: get_business_durtation_h(row[Case.start_ts.name], row[Case.end_ts.name], self._businesshrs), axis=1)
         result[Case.start_date.name] = result[Case.start_ts.name].dt.date.astype("datetime64[ns]")
         result[Case.end_date.name] = result[Case.end_ts.name].dt.date.astype("datetime64[ns]")
         return result

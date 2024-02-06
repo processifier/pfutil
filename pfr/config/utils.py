@@ -7,8 +7,10 @@ import os
 
 LOG = getLogger(__name__)
 
+
 def _camel_case_to_underscored(text):
     return re.sub(r'([A-Z])', r'_\1', text).lower()
+
 
 CONFIG_SCHEMA_FILE = 'config.schema.yaml'
 
