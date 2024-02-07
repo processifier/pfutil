@@ -33,6 +33,7 @@ class Eventlog(Base):
     case_id = Column(Integer, name=Case.id.name, nullable=False)
     activity = Column(String(128))
     activity_next = Column(String(128))
+    resource = Column(String(128))
     activity_start_ts = Column(DateTime)
     activity_end_ts = Column(DateTime)
     activity_start_date = Column(Date)

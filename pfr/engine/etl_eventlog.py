@@ -61,12 +61,13 @@ class EventlogEtl:
                                                             format=timestamp_mask,
                                                             utc=True).dt.tz_localize(None)
 
-        if "resource" in self._config['eventlogInputColumns'].keys():
+        if "resource" in self._config['eventlogInputColumns'].keys() and "resource" in raw_eventlog.columns :
             eventlog[Eventlog.resource.name] = raw_eventlog[self._config['eventlogInputColumns']['resource']]
         else:
             eventlog[Eventlog.resource.name] = ""
 
-        if "startTimestamp" in self._config['eventlogInputColumns'].keys():
+        if ("startTimestamp" in self._config['eventlogInputColumns'].keys() and
+            self._config['eventlogInputColumns']["startTimestamp"] in raw_eventlog.columns):
             eventlog[Eventlog.activity_start_ts.name] = pd.to_datetime(
                 raw_eventlog[self._config['eventlogInputColumns']['startTimestamp']],
                 errors='raise',

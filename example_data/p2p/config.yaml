@@ -3,6 +3,7 @@ input:
   processName: process
   eventlogInputColumns:
     caseId: case_id
-    activity: Activity
+    activity: activity
     endTimestamp: end_time
     startTimestamp: start_time
+    resource: resource

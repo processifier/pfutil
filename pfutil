@@ -14,7 +14,8 @@ default_eventlog_columns_mapping = {
     "caseId": "case_id",
     "activity": "activity",
     "endTimestamp": "end_time",
-    "startTimestamp": "start_time"
+    "startTimestamp": "start_time",
+    "resource": "resource"
 }
 
 default_input_config = {'input': {'timestampMask': default_timestamp_mask,
@@ -42,6 +43,7 @@ else:
     print(f"\t\t Activity -> {default_eventlog_columns_mapping.get('activity')}")
     print(f"\t\t Start timestamp -> {default_eventlog_columns_mapping.get('startTimestamp')}")
     print(f"\t\t End timestamp -> {default_eventlog_columns_mapping.get('endTimestamp')}")
+    print(f"\t\t Resource -> {default_eventlog_columns_mapping.get('resource')}")
 
 def create_model(input_config, eventlog):
     lp = LogProcessor(input_config)

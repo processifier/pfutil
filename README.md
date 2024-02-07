@@ -1,23 +1,71 @@
 # Event Log Uploader
 NOTICE: _Use **Python 3.10** to avoid issues with dependencies._
 
-## Install dependencies
+# Install dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
-## Run
-NOTICE: _All command line params except `-config` can be set in config file._
+# Creating data for Processifier Process Mining visual
 
-* upload data 
+pfutil takes eventlog input file in csv and  creates four files which are used as input for Processifier Process Mining visual (https://appsource.microsoft.com/pl-pl/product/power-bi-visuals/processifierspzoo1667474389705.processifier-process-mining-visual?tab=overview):
+* case_
+* eventlog
+* global_stats
+* variant
+
+## Run (default configuration) 
+  ```sh
+  pfutil put -e 'path to eventlog csv file' 
+  ```
+Above execution assumes that eventlog input file satisfies the following criteria:
+* contains three obligatory columns:
+  * **case_id** - unique identifier of process instance
+  * **activity** - name of activity
+  * **end_timestamp** - timestamp of activity completion
+
+
+* optionally contains two additional columns 
+  * **start_timestamp** - timestamp of activity start 
+  * **resource** - resource assign to specific activity execution 
+
+
+* Timestamp is store in specific format: 
+  * **"%Y-%m-%dT%H:%M:%S"**
+
+
+NOTICE 1:  Presence start timestamp data in dataset enables additional duration statistics on activity level
+
+NOTICE 2:  Output files are saved to default directory: **./processifier_output**
+
+
+## Run (user configuration)
+
+You can also execute pfutil with your own columns names mapping and chosen timestamp mask. Moreover there is option for specifing output folder:
+
+
   ```sh
   pfutil  -c 'path to config yaml file' put -e 'path to eventlog csv file' --csv-out 'relative path to output_test directory' 
   ```
 
-* display help
+Display help
   * `pfutil -h` prints available commands and top level options,
   * `pfutil <COMMAND> -h` shows command's help, ex: `pfutil put -h`
   
+### Structure of  config.yaml
+
+```sh
+input:
+  timestampMask: "%Y-%m-%dT%H:%M:%S" #timestamp mask used for start/end of activity (obligatory)
+  processName: process  #process name defined by user (obligatory)
+  eventlogInputColumns: #mapping of eventlog columns             
+    caseId: case_id                  #required
+    activity: Activity               #required
+    endTimestamp: end_time           #required
+    startTimestamp: start_time       #optional
+    resource: Resource               #optional
+```
+
 ### Example
 
 [example_data/p2p/](example_data/p2p/) directory contains sample data
@@ -27,28 +75,4 @@ NOTICE: _All command line params except `-config` can be set in config file._
 NOTICE:  In order to overwrite existing file in chosen directory add the following flag:
 ```sh
 --force-overwrite
-```
-
-### Structure of sample config.yaml
-input:
-```sh
-  timestampMask: "%Y-%m-%dT%H:%M:%S" (timestamp mask used for start/end of activity) 
-```
-```sh
-  workingCalendar:                   (calendar settings for business hours calculation)
-    holidayCalendar: PL              (country code, see details https://pypi.org/project/holidays/)
-    workingDays: [0,1,2,3,4]         (list of working days, 0 refers to monday etc.)
-    workStart: 8                     (work starting hour)
-    workEnd: 16                      (work ending hour)
-```
-```sh
-  processName: p2p                   (process name defined by user)
-```
-```sh
-  eventlogInputColumns:              (mapping of eventlog columns)
-    caseId: case_id                  (required)
-    activity: Activity               (required)
-    endTimestamp: end_time           (required)
-    startTimestamp: start_time       (optional)
-    resource: Resource               (optional)
 ```

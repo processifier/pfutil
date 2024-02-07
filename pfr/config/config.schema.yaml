@@ -30,3 +30,5 @@ properties:
             type: string
           startTimestamp:
             type: string
+          resource:
+            type: string
