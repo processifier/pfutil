@@ -30,7 +30,7 @@ Above execution assumes that eventlog input file satisfies the following criteri
   * **resource** - resource assign to specific activity execution 
 
 
-* Timestamp is store in specific format: 
+* Timestamp is stored in specific format: 
   * **"%Y-%m-%dT%H:%M:%S"**
 
 
