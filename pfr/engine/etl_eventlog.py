@@ -49,32 +49,47 @@ class EventlogEtl:
     def create(self, raw_eventlog):
         timestamp_mask = self._config["timestampMask"]
         eventlog = pd.DataFrame()
+        if self._config['eventlogInputColumns']['caseId'] not in raw_eventlog.columns:
+            print(f'The case id column set in configuration file is not present in passed eventlog file')
+            exit(1)
+        if self._config['eventlogInputColumns']['activity'] not in raw_eventlog.columns:
+            print(f'The activity column set in configuration file is not present in passed eventlog file')
+            exit(1)
         eventlog[Eventlog.case_id.name] = raw_eventlog[self._config['eventlogInputColumns']['caseId']].astype(str)
-
-
         eventlog[Eventlog.activity.name] = raw_eventlog[self._config['eventlogInputColumns']['activity']]
         eventlog[Eventlog.activity.name] = eventlog.apply(lambda row: trim_if_string(row[Eventlog.activity.name]), axis=1)
         eventlog[Eventlog.id.name] = range(0, len(eventlog))
-        eventlog[Eventlog.activity_end_ts.name] = raw_eventlog[self._config['eventlogInputColumns']['endTimestamp']]
-        eventlog[Eventlog.activity_end_ts.name] = pd.to_datetime(eventlog[Eventlog.activity_end_ts.name],
-                                                            errors='raise',
-                                                            format=timestamp_mask,
-                                                            utc=True).dt.tz_localize(None)
+
+        if (self._config['eventlogInputColumns'].get('endTimestamp') not in raw_eventlog.columns
+                and self._config['eventlogInputColumns'].get('startTimestamp') not in raw_eventlog.columns):
+            print(f'The timestamp columns set in configuration file is not present in passed eventlog file')
+            exit(1)
+
+        if self._config['eventlogInputColumns'].get('endTimestamp'):
+            eventlog[Eventlog.activity_end_ts.name] = raw_eventlog[self._config['eventlogInputColumns']['endTimestamp']]
+        else:
+            eventlog[Eventlog.activity_end_ts.name] = raw_eventlog[self._config['eventlogInputColumns']['startTimestamp']]
+
+        if self._config['eventlogInputColumns'].get('startTimestamp'):
+            eventlog[Eventlog.activity_start_ts.name] = raw_eventlog[self._config['eventlogInputColumns']['startTimestamp']]
+        else:
+            eventlog[Eventlog.activity_start_ts.name] = raw_eventlog[self._config['eventlogInputColumns']['endTimestamp']]
+
+        eventlog[Eventlog.activity_end_ts.name] = pd.to_datetime(
+            eventlog[Eventlog.activity_end_ts.name],
+            errors='raise',
+            format=timestamp_mask,
+            utc=True).dt.tz_localize(None)
+        eventlog[Eventlog.activity_start_ts.name] = pd.to_datetime(
+            eventlog[Eventlog.activity_start_ts.name],
+            errors='raise',
+            format=timestamp_mask,
+            utc=True).dt.tz_localize(None)
 
         if "resource" in self._config['eventlogInputColumns'].keys() and "resource" in raw_eventlog.columns :
             eventlog[Eventlog.resource.name] = raw_eventlog[self._config['eventlogInputColumns']['resource']]
         else:
             eventlog[Eventlog.resource.name] = ""
-
-        if ("startTimestamp" in self._config['eventlogInputColumns'].keys() and
-            self._config['eventlogInputColumns']["startTimestamp"] in raw_eventlog.columns):
-            eventlog[Eventlog.activity_start_ts.name] = pd.to_datetime(
-                raw_eventlog[self._config['eventlogInputColumns']['startTimestamp']],
-                errors='raise',
-                format=timestamp_mask,
-                utc=True).dt.tz_localize(None)
-        else:
-            eventlog[Eventlog.activity_start_ts.name] = eventlog[Eventlog.activity_end_ts.name]
 
         eventlog[Eventlog.activity_duration_h.name] = eventlog.apply(
             lambda row: get_duration_h(row[Eventlog.activity_start_ts.name], row[Eventlog.activity_end_ts.name]), axis=1)

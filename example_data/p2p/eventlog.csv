@@ -1,4 +1,4 @@
-case_id,start_time,end_time,Role,activity,Resource
+case_id,start_time,end_time,Role,activity,resource
 1,2010-12-31T13:00:00,2010-12-31T13:37:00,Requester, Create Purchase Requisition,Kim Passa
 1,2010-12-31T18:37:00,2010-12-31T18:45:00,Requester, Create Request for Quotation Requester,Kim Passa
 1,2010-12-31T19:41:00,2010-12-31T19:55:00,Requester, Analyze Request for Quotation,Karel de Groot

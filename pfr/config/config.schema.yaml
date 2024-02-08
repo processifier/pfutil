@@ -16,11 +16,15 @@ properties:
         type: string
       eventlogInputColumns:
         type: object
+        additionalProperties: false
+
         required:
         - caseId
         - activity
-        - endTimestamp
-        additionalProperties: false
+        anyOf: [
+        {"required": ["startTimestamp"]},
+        {"required": ["endTimestamp"]}
+        ]
         properties:
           caseId:
             type: string
