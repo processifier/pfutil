@@ -1,5 +1,6 @@
 import pandas as pd
 from logging import getLogger
+import traceback
 from pfr.config.schema import Eventlog
 
 from pfr.engine.helpers import trim_if_string, get_duration_h
@@ -75,16 +76,31 @@ class EventlogEtl:
         else:
             eventlog[Eventlog.activity_start_ts.name] = raw_eventlog[self._config['eventlogInputColumns']['endTimestamp']]
 
-        eventlog[Eventlog.activity_end_ts.name] = pd.to_datetime(
-            eventlog[Eventlog.activity_end_ts.name],
-            errors='raise',
-            format=timestamp_mask,
-            utc=True).dt.tz_localize(None)
-        eventlog[Eventlog.activity_start_ts.name] = pd.to_datetime(
-            eventlog[Eventlog.activity_start_ts.name],
-            errors='raise',
-            format=timestamp_mask,
-            utc=True).dt.tz_localize(None)
+        try:
+            eventlog[Eventlog.activity_end_ts.name] = pd.to_datetime(
+                eventlog[Eventlog.activity_end_ts.name],
+                errors='raise',
+                format=timestamp_mask,
+                utc=True).dt.tz_localize(None)
+        except ValueError:
+            error = traceback.format_exc()
+            stack_trace = error.split('\n')
+            print(stack_trace[-2])
+            print('Defined timestamp mask seems to be incorrect')
+            exit(1)
+
+        try:
+            eventlog[Eventlog.activity_start_ts.name] = pd.to_datetime(
+                eventlog[Eventlog.activity_start_ts.name],
+                errors='raise',
+                format=timestamp_mask,
+                utc=True).dt.tz_localize(None)
+        except ValueError:
+            error = traceback.format_exc()
+            stack_trace = error.split('\n')
+            print(stack_trace[-2])
+            print('Defined timestamp mask seems to be incorrect')
+            exit(1)
 
         if "resource" in self._config['eventlogInputColumns'].keys() and "resource" in raw_eventlog.columns :
             eventlog[Eventlog.resource.name] = raw_eventlog[self._config['eventlogInputColumns']['resource']]
