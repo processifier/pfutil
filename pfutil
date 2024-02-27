@@ -7,10 +7,10 @@ from pfr import LogProcessor
 from pfr.cmdline import Parser
 from pfr.config import load_config, LOGGING_FORMAT
 
-default_output_dir = 'processifier_output'
-default_timestamp_mask = "%Y-%m-%dT%H:%M:%S"
-default_process_name = "process"
-default_eventlog_columns_mapping = {
+DEFAULT_OUTPUT_DIR = 'processifier_output'
+DEFAULT_TIMESTAMP_MASK = "%Y-%m-%dT%H:%M:%S"
+DEFAULT_PROCESS_NAME = "process"
+DEFAULT_EVENTLOG_COLUMNS = {
     "caseId": "case_id",
     "activity": "activity",
     "endTimestamp": "end_time",
@@ -18,9 +18,10 @@ default_eventlog_columns_mapping = {
     "resource": "resource"
 }
 
-default_input_config = {'input': {'timestampMask': default_timestamp_mask,
-                                  'processName': default_process_name,
-                                  'eventlogInputColumns': default_eventlog_columns_mapping}}
+DEFAULT_INPUT_CONFIG = {'input': {'timestampMask': DEFAULT_TIMESTAMP_MASK,
+                                  'processName': DEFAULT_PROCESS_NAME,
+                                  'eventlogInputColumns': DEFAULT_EVENTLOG_COLUMNS}}
+
 logging.basicConfig(format=LOGGING_FORMAT)
 LOG = logging.getLogger()
 LOG.setLevel(logging.INFO)
@@ -32,18 +33,18 @@ if cmd_args.config:
     LOG.debug("Using config: %s", cmd_args.config)
     config, params = load_config(cmd_args)
 else:
-    config = default_input_config
+    config = DEFAULT_INPUT_CONFIG
     params = cmd_args
     print("No config file specified")
     print("Applying default configuration:")
-    print(f"\t Timestamp mask: {default_timestamp_mask}")
-    print(f"\t Process name: {default_timestamp_mask}")
-    print("\t Eventlog columns mapping:")
-    print(f"\t\t Case ID  -> {default_eventlog_columns_mapping.get('caseId')}")
-    print(f"\t\t Activity -> {default_eventlog_columns_mapping.get('activity')}")
-    print(f"\t\t Start timestamp -> {default_eventlog_columns_mapping.get('startTimestamp')}")
-    print(f"\t\t End timestamp -> {default_eventlog_columns_mapping.get('endTimestamp')}")
-    print(f"\t\t Resource -> {default_eventlog_columns_mapping.get('resource')}")
+    print(f" Timestamp mask: {DEFAULT_TIMESTAMP_MASK}")
+    print(f" Process name: {DEFAULT_PROCESS_NAME}")
+    print(" Eventlog columns:")
+    print(f"\t caseId (Case ID) -> {DEFAULT_EVENTLOG_COLUMNS.get('caseId')}")
+    print(f"\t activity (Activity) -> {DEFAULT_EVENTLOG_COLUMNS.get('activity')}")
+    print(f"\t startTimestamp (Start timestamp) -> {DEFAULT_EVENTLOG_COLUMNS.get('startTimestamp')}")
+    print(f"\t endTimestamp (End timestamp) -> {DEFAULT_EVENTLOG_COLUMNS.get('endTimestamp')}")
+    print(f"\t resource (Resource) -> {DEFAULT_EVENTLOG_COLUMNS.get('resource')}")
 
 def create_model(input_config, eventlog):
     lp = LogProcessor(input_config)
@@ -67,7 +68,7 @@ if cmd_args.command == Parser.COMMAND_PUT:
     LOG.info(f"Creating model...")
     model = create_model(config['input'], eventlog)
     LOG.info(f"Creating model...OK")
-    output_path = params.csv_out if params.csv_out else default_output_dir
+    output_path = params.csv_out if params.csv_out else DEFAULT_OUTPUT_DIR
     if not params.csv_out:
         print("No output dir specified")
         print(f"\t Output files will be saved to: {os.path.join(os.getcwd(), output_path)} ")

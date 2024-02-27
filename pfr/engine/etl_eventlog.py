@@ -1,6 +1,5 @@
 import pandas as pd
 from logging import getLogger
-import traceback
 from pfr.config.schema import Eventlog
 
 from pfr.engine.helpers import trim_if_string, get_duration_h
@@ -82,11 +81,8 @@ class EventlogEtl:
                 errors='raise',
                 format=timestamp_mask,
                 utc=True).dt.tz_localize(None)
-        except ValueError:
-            error = traceback.format_exc()
-            stack_trace = error.split('\n')
-            print(stack_trace[-2])
-            print('Defined timestamp mask seems to be incorrect')
+        except ValueError as ex:
+            print('Defined timestamp mask seems to be incorrect:\n', ex)
             exit(1)
 
         try:
@@ -95,11 +91,8 @@ class EventlogEtl:
                 errors='raise',
                 format=timestamp_mask,
                 utc=True).dt.tz_localize(None)
-        except ValueError:
-            error = traceback.format_exc()
-            stack_trace = error.split('\n')
-            print(stack_trace[-2])
-            print('Defined timestamp mask seems to be incorrect')
+        except ValueError as ex:
+            print('Defined timestamp mask seems to be incorrect:\n', ex)
             exit(1)
 
         if "resource" in self._config['eventlogInputColumns'].keys() and "resource" in raw_eventlog.columns :
