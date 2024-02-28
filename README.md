@@ -72,5 +72,5 @@ input:
 ```sh
 ./pfutil -c example_data/p2p/config.yaml  put -e example_data/p2p/eventlog.csv --csv-out output_test
 ```
-NOTICE:  In order to overwrite existing files in the chosen directory use ```--force-overwrite``` the following flag:
+NOTICE:  In order to overwrite existing files in the chosen directory use ```--force-overwrite``` flag:
 
