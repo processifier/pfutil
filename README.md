@@ -59,10 +59,10 @@ input:
   timestampMask: "%Y-%m-%dT%H:%M:%S"  # timestamp mask used for start/end of the activity (required)
   processName: process                # process name defined by user (required)
   eventlogInputColumns:               # eventlog csv input file column names             
-    caseId: case_id                   # case ID column name (required), default: case_id
-    activity: activity                # activity column name (required), default: activity
-    endTimestamp: end_time            # column with time of the activity completion (required if startTimestamp is not specified, optional otherwise), default: end_time 
-    startTimestamp: start_time        # column with time of the activity completion (required if startTimestamp is not specified, optional otherwise), default: start_time
+    caseId: case_id                   # case ID column name (required)
+    activity: activity                # activity column name (required)
+    endTimestamp: end_time            # column with time of the activity completion (required if startTimestamp is not specified, optional otherwise)
+    startTimestamp: start_time        # column with time of the activity start (required if endTimestamp is not specified, optional otherwise)
     resource: resource                # resource column name (optional), default: resource
 ```
 
