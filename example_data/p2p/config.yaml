@@ -1,14 +1,9 @@
 input:
   timestampMask: "%Y-%m-%dT%H:%M:%S"
-  workingCalendar:
-    holidayCalendar: PL
-    workingDays: [0,1,2,3,4]
-    workStart: 8
-    workEnd: 16
-  processName: p2p
+  processName: process
   eventlogInputColumns:
     caseId: case_id
-    activity: Activity
+    activity: activity
     endTimestamp: end_time
     startTimestamp: start_time
-    resource: Resource
+    resource: resource
